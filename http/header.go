@@ -157,19 +157,37 @@ type headerSorter struct {
 func (s *headerSorter) Len() int      { return len(s.kvs) }
 func (s *headerSorter) Swap(i, j int) { s.kvs[i], s.kvs[j] = s.kvs[j], s.kvs[i] }
 func (s *headerSorter) Less(i, j int) bool { // If the order isn't defined, sort lexicographically.
+	// If the order isn't defined, sort lexicographically.
+	// fmt.Println(strings.ToLower(s.kvs[i].key))
+	// fmt.Println(strings.ToLower(s.kvs[j].key))
+	// fmt.Println(s.order, strings.ToLower(s.kvs[i].key))
+	// fmt.Println(s.order[strings.ToLower(s.kvs[i].key)])
 	if s.order == nil {
+
 		return s.kvs[i].key < s.kvs[j].key
+
 	}
+
 	idxi, iok := s.order[strings.ToLower(s.kvs[i].key)]
+
 	idxj, jok := s.order[strings.ToLower(s.kvs[j].key)]
+
 	if !iok && !jok {
+
 		return s.kvs[i].key < s.kvs[j].key
+
 	} else if !iok && jok {
+
 		return false
+
 	} else if iok && !jok {
+
 		return true
+
 	}
+
 	return idxi < idxj
+
 }
 
 var headerSorterPool = sync.Pool{
