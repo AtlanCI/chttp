@@ -5,6 +5,7 @@
 package http
 
 import (
+	"fmt"
 	"io"
 	"net/http/httptrace"
 	"net/textproto"
@@ -214,19 +215,38 @@ func (h Header) sortedKeyValues(exclude map[string]bool) (kvs []keyValues, hs *h
 }
 
 func (h Header) sortedKeyValuesBy(order map[string]int, exclude map[string]bool) (kvs []keyValues, hs *headerSorter) {
+	fmt.Println("exclusion", exclude)
 	hs = headerSorterPool.Get().(*headerSorter)
+
 	if cap(hs.kvs) < len(h) {
+
 		hs.kvs = make([]keyValues, 0, len(h))
+
 	}
+
 	kvs = hs.kvs[:0]
+
 	for k, vv := range h {
+
 		if !exclude[k] {
+
 			kvs = append(kvs, keyValues{k, vv})
+
 		}
+
 	}
+
 	hs.kvs = kvs
+
 	hs.order = order
+
+	fmt.Println("hs", hs.kvs)
+
+	fmt.Println("hs order", hs.order)
+
 	sort.Sort(hs)
+
+	fmt.Println("after sort hs", hs)
 	return kvs, hs
 }
 
